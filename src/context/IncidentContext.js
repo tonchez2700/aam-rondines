@@ -91,9 +91,12 @@ const setIncident = (dispatch) => {
 const store = (dispatch) => {
     return async (params, id, latitude, longitude) => {
 
+        const imagesEvi = params.images.map(item => (
+            `data:image/jpeg;base64,${item.source}`
+        ))
         const user = JSON.parse(await AsyncStorage.getItem('user'))
         const token = user.token
-        const data = prepareData(params, id, latitude, longitude)
+        const data = prepareData(params, imagesEvi, id, latitude, longitude)
         if (!data.error) {
 
             Alert.alert(
@@ -104,6 +107,7 @@ const store = (dispatch) => {
                     onPress: () => rootNavigation.goBack()
                 }]
             )
+            console.log(data.data);
             const response = await httpClient.post(
                 'incidentes/crearIncidente',
                 data.data,
@@ -111,6 +115,7 @@ const store = (dispatch) => {
                     'Authorization': `Bearer ${token}`,
                 }
             )
+            console.log(response);
         } else {
             dispatch({
                 type: 'SET_ERROR',
@@ -139,7 +144,7 @@ const handleInputChange = (dispatch, state) => {
     }
 }
 
-const prepareData = (data, id, latitude, longitude) => {
+const prepareData = (data, imagesEvi, id, latitude, longitude) => {
     let ErrorData = { error: false }
     if (data.incidenteTipoId == "")
         return { ...ErrorData, error: true, message: 'Tipo de incidente es requerido.' }
@@ -154,7 +159,7 @@ const prepareData = (data, id, latitude, longitude) => {
             latitud: latitude,
             longitud: longitude,
             IncidenteTipoId: data.incidenteTipoId,
-            Evidencias: [`data:image/jpeg;base64,${data.images[0].source}`],
+            Evidencias: imagesEvi,
             ComentarioGuardia: data.comentarioGuardia,
             RondaId: id,
         }

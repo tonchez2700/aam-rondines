@@ -94,7 +94,7 @@ const clearStateList = (dispatch) => {
 
 const setPointsList = (dispatch) => {
     return async (id) => {
-        
+
         const user = JSON.parse(await AsyncStorage.getItem('user'));
         const token = user.token
         const response = await httpClient.get(`rondas/obtenerSiguientePunto/${id}`,
@@ -129,13 +129,14 @@ const setPointsList = (dispatch) => {
 
 
 const storeCheck = (dispatch) => {
-    return async (id, latitud, longitud, modalLatitud, modalLongitud) => {
+    return async (id, alcance, latitud, longitud, modalLatitud, modalLongitud) => {
         console.log(latitud, longitud, modalLatitud, modalLongitud);
+        console.log(alcance);
         const data = prepareData(latitud, longitud)
         const verification = isPointWithinRadius(
             { latitude: modalLatitud, longitude: modalLongitud },
             { latitude: latitud, longitude: longitud },
-            15
+            alcance
 
         );
 

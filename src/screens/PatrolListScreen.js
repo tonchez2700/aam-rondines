@@ -55,10 +55,9 @@ const PatrolListScreen = () => {
                                         color: "black"
                                     }]}>{item.nombre}</Text>
                                     <TouchableOpacity
-                                        style={tw`p-2`}
+                                        style={[tw`p-2`, {paddingRight: 0}]}
                                         onPress={() => setRonda(item.id)}>
                                         <Icon
-                                            style={{ paddingLeft: 22 }}
                                             size={35}
                                             name='directions-run'
                                             type='material'

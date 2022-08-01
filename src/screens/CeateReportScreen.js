@@ -36,7 +36,7 @@ const CeateReportScreen = (props) => {
         setIncident()
         requestForegroundPermissions()
     }, [])
-    
+
     return (
         <View style={styles.container}>
             {!stateLocation.hasPermission ?
@@ -122,11 +122,11 @@ const CeateReportScreen = (props) => {
                         value={inputState.comentarioGuardia}
                         onChangeText={(value) => handleInputChange(value, 'comentarioGuardia')}
                     />
-             
+
                     <Button
                         buttonStyle={{ padding: 10, backgroundColor: '#002443', marginBottom: 15, marginTop: 50 }}
                         title="Aceptar"
-                        onPress={() => store(inputState, statePoint.ronda.id,stateLocation.location?.latitude,stateLocation.location?.longitude)}
+                        onPress={() => store(inputState, statePoint.ronda.id, stateLocation.location?.latitude, stateLocation.location?.longitude)}
                     />
 
                     <Button
