@@ -33,7 +33,8 @@ const PointsListScreen = () => {
     const [modalLongitud, setModalLongitud] = useState(null);
     const today = new Date();
     const todayFormat = moment(today).format('DD-MM-YYYY , h:mm:ss a')
-
+    const time = new Date();
+    const timeFormat = moment(time).format('h:mm:ss a')
     const full_initial_date = new Date(stateRonda.ronda?.fechaHoraInicio);
     const initial_date = moment(full_initial_date).format('DD-MM-YYYY');
     useEffect(() => {
@@ -79,13 +80,13 @@ const PointsListScreen = () => {
                                 <Text style={[tw` flex-1 text-black font-bold text-lg `]}>Fecha de inicio: </Text>
                                 <Text style={[tw` flex-1 text-black text-lg`]}> {initial_date}</Text>
                             </View>
-                            <View style={tw`flex-row `}>
+                            <View style={tw`flex-row mb-5 `}>
                                 <Text style={[tw`flex-1 text-black font-bold text-lg `]}>Rondin: </Text>
                                 <Text style={[tw`flex-1 text-black text-lg`]}> {stateRonda.ronda.rondinNombre}</Text>
                             </View>
                             <View style={tw`flex-row mb-5`}>
-                                <Text style={[tw`flex-1 text-black font-bold text-lg `]}>Tiempo Acumulado: </Text>
-                                <Text style={[tw`flex-1 text-black text-lg`]}> {initial_date}</Text>
+                                <Text numberOfLines={1} style={[tw`flex-1 text-black font-bold text-lg `]}>Tiempo Acumulado: </Text>
+                                <Text style={[tw`flex-1 text-black text-lg`]}> {timeFormat}</Text>
                             </View>
 
                         </View>
