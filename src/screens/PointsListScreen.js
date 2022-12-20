@@ -25,10 +25,8 @@ const PointsListScreen = () => {
 
     const navigation = useNavigation();
     const { state: stateLocation, requestForegroundPermissions } = useContext(LocationContext)
-    const { state, setPointsList, clearStateList, clearState, storeCheck } = useContext(PointsListContext);
-    const [clockState, setClockState] = useState();
+    const { state, setPointsList, clearStateList, isVisibleModal, storeCheck } = useContext(PointsListContext);
     const { state: stateRonda, } = useContext(PatrolsListContext);
-    const [modalVisible, setModalVisible] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [modalID, setModalID] = useState(null);
     const [modalLatitud, setModalLatitud] = useState(null);
@@ -36,9 +34,6 @@ const PointsListScreen = () => {
     const today = new Date();
     const todayFormat = moment(today).format('DD-MM-YYYY , h:mm:ss a')
 
-    const toggleModalVisibility = () => {
-        setModalVisible(!modalVisible);
-    };
     const full_initial_date = new Date(stateRonda.ronda?.fechaHoraInicio);
     const initial_date = moment(full_initial_date).format('DD-MM-YYYY');
     useEffect(() => {
@@ -98,100 +93,97 @@ const PointsListScreen = () => {
                             !state.fetchingData
                                 ?
 
-                                <FlatList
-                                    data={state.point}
-                                    initialNumToRender={3}
-                                    maxToRenderPerBatch={15}
-                                    updateCellsBatchingPeriod={50}
-                                    keyExtractor={item => `${item.id}`}
-                                    onEndReachedThreshold={0.5}
-                                    onEndReached={() => console.log('load more')}
-                                    renderItem={({ item }) => {
-                                        return (
-                                            <View>
-                                                {
-                                                    state.point[0].id == item.id
-                                                        ?
-                                                        <View style={tw`flex-row  pt-5 pb-5 items-center border-b border-t border-gray-200`}>
-                                                            <View style={tw`flex-initial`}>
+                                <View>
+                                    {
+                                        state.point.map((item, key) => {
+                                            return (
+                                                <View key={key}>
+                                                    {
+                                                        state.point[0].id == item.id
+                                                            ?
+                                                            <View style={tw`flex-row  pt-5 pb-5 items-center border-b border-t border-gray-200`}>
+                                                                <View style={tw`flex-initial`}>
+                                                                </View>
+                                                                <View style={tw`flex-row`}>
+                                                                    <Text style={[tw`flex-initial w-64  font-bold`, { color: '#002443' }]}>{item.descripcion}</Text>
+                                                                    <TouchableOpacity
+                                                                        style={tw`flex-none mr-1`}>
+                                                                        <Icon
+                                                                            name='location-on'
+                                                                            type='material'
+                                                                            color='#002443' />
+                                                                    </TouchableOpacity>
+                                                                    <TouchableOpacity
+                                                                        style={tw`flex-none`}
+                                                                        onPress={() => {
+                                                                            isVisibleModal('isVisible')
+                                                                            setModalData(item.descripcion)
+                                                                            setModalID(item.id)
+                                                                            setModalLatitud(item.latitud)
+                                                                            setModalLongitud(item.longitud)
+                                                                        }}>
+                                                                        <Icon
+                                                                            name='circle'
+                                                                            type='material'
+                                                                            color='#D6A51C' />
+                                                                    </TouchableOpacity>
+                                                                </View>
+
+
                                                             </View>
-                                                            <View style={tw`flex-row`}>
-                                                                <Text style={[tw`flex-initial w-64  font-bold`, { color: '#002443' }]}>{item.descripcion}</Text>
-                                                                <TouchableOpacity
-                                                                    style={tw`flex-none mr-1`}>
+                                                            :
+                                                            <View style={tw`flex-row  pt-5 pb-5 items-center border-b border-t border-gray-200`}>
+                                                                <View style={tw`flex-initial`}>
+                                                                </View>
+                                                                <View style={tw`flex-row`}>
+                                                                    <Text style={[tw`flex-initial w-64  font-bold`, { color: '#002443' }]}>{item.descripcion}</Text>
                                                                     <Icon
+                                                                        style={tw`flex-none`}
                                                                         name='location-on'
                                                                         type='material'
                                                                         color='#002443' />
-                                                                </TouchableOpacity>
-                                                                <TouchableOpacity
-                                                                    style={tw`flex-none`}
-                                                                    onPress={() => {
-                                                                        toggleModalVisibility()
-                                                                        setModalData(item.descripcion)
-                                                                        setModalID(item.id)
-                                                                        setModalLatitud(item.latitud)
-                                                                        setModalLongitud(item.longitud)
-                                                                    }}>
                                                                     <Icon
+                                                                        style={tw`flex-none`}
                                                                         name='circle'
                                                                         type='material'
-                                                                        color='#D6A51C' />
-                                                                </TouchableOpacity>
-                                                            </View>
+                                                                        color='green' />
 
+                                                                </View>
 
-                                                        </View>
-                                                        :
-                                                        <View style={tw`flex-row  pt-5 pb-5 items-center border-b border-t border-gray-200`}>
-                                                            <View style={tw`flex-initial`}>
-                                                            </View>
-                                                            <View style={tw`flex-row`}>
-                                                                <Text style={[tw`flex-initial w-64  font-bold`, { color: '#002443' }]}>{item.descripcion}</Text>
-                                                                <Icon
-                                                                    style={tw`flex-none`}
-                                                                    name='location-on'
-                                                                    type='material'
-                                                                    color='#002443' />
-                                                                <Icon
-                                                                    style={tw`flex-none`}
-                                                                    name='circle'
-                                                                    type='material'
-                                                                    color='green' />
 
                                                             </View>
-
-
-                                                        </View>
-                                                }
-                                            </View>
-                                        )
-                                    }}
-                                />
+                                                    }
+                                                </View>
+                                            )
+                                        })
+                                    }
+                                </View>
                                 :
                                 <ActivityIndicator size="large" color="#118EA6" style={tw`mt-5`} />
                         }
                         <Modal
                             animationType="slide"
                             transparent
-                            visible={modalVisible}
+                            visible={state.isVisible}
                             presentationStyle="overFullScreen"
-                            onDismiss={() => toggleModalVisibility()}>
+                            onRequestClose={() =>
+                                isVisibleModal('isVisible')
+                            }>
                             <View style={styles.viewWrapper}>
                                 <View style={styles.modalView}>
                                     <Text style={[tw`mr-2 font-bold text-lg justify-center`, { color: '#002443' }]}>Check-In</Text>
                                     <View >
                                         <View style={tw`flex-row `}>
                                             <Text style={[tw`mr-2 font-bold`, { color: '#002443' }]}>Punto:</Text>
-                                            <Text>{modalData}</Text>
+                                            <Text style={{ flex: 1 }} numberOfLines={1}>{modalData}</Text>
                                         </View>
                                         <View style={tw`flex-row  `}>
                                             <Text style={[tw`mr-2 font-bold`, { color: '#002443' }]}>Fecha y Hora:</Text>
-                                            <Text>{todayFormat}</Text>
+                                            <Text numberOfLines={1}>{todayFormat}</Text>
                                         </View>
                                         <View style={tw`flex-row `}>
                                             <Text style={[tw`mr-2 font-bold`, { color: '#002443' }]}>Ubicación:</Text>
-                                            <Text>{`${stateLocation.location?.latitude}, ${stateLocation.location?.longitude}`} </Text>
+                                            <Text style={{ flex: 1 }} numberOfLines={1}>{`${stateLocation.location?.latitude}, ${stateLocation.location?.longitude}`} </Text>
                                         </View>
                                     </View>
 
@@ -211,13 +203,15 @@ const PointsListScreen = () => {
                                                         }]
                                                     )
                                                     :
-                                                    storeCheck(modalID, stateRonda.ronda.alcance, stateLocation.location.latitude, stateLocation.location.longitude, modalLatitud, modalLongitud),
-                                                    toggleModalVisibility()
+                                                    storeCheck(modalID, stateRonda.ronda.alcance, stateLocation.location.latitude, stateLocation.location.longitude, modalLatitud, modalLongitud)
+                                                    , isVisibleModal('isVisible')
                                             }} />
                                         <Button
                                             title="Cancelar"
                                             buttonStyle={{ marginLeft: 50, backgroundColor: '#848484', marginBottom: 15 }}
-                                            onPress={() => toggleModalVisibility()} />
+                                            onPress={() => {
+                                                isVisibleModal('isVisible')
+                                            }} />
 
 
                                     </View>

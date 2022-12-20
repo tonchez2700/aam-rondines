@@ -13,35 +13,28 @@ const ModalCancel = () => {
 
 
     const navigation = useNavigation();
-    const { state, RondaDelete, handleInputChange, clearState } = useContext(PointsListContext);
+    const { state, RondaDelete, handleInputChange, clearState, isVisibleModal } = useContext(PointsListContext);
     const { state: stateRonda, } = useContext(PatrolsListContext);
-    const [modalVisible, setModalVisible] = useState(false);
-    const toggleModalVisibility = () => {
-        setModalVisible(!modalVisible);
-    };
-    const multipleFunction = () => {
-        toggleModalVisibility();
-    }
-
+   
     useEffect(() => {
-
         clearState()
-
     }, [])
     return (
         <View>
             <Button
                 buttonStyle={{ backgroundColor: '#B80A0A', marginBottom: 10 }}
                 title={"Cancelar Ronda"}
-                onPress={() => toggleModalVisibility()}>
+                onPress={() => isVisibleModal('isVisibleCancel')}>
             </Button>
 
             <Modal
                 animationType="slide"
                 transparent
-                visible={modalVisible}
+                visible={state.isVisibleCancel}
                 presentationStyle="overFullScreen"
-                onDismiss={() => toggleModalVisibility()}>
+                onRequestClose={() =>
+                    isVisibleModal('isVisibleCancel')
+                }>
                 <View style={styles.viewWrapper}>
                     <View style={styles.modalView}>
                         <Text style={tw`font-bold text-xl`}>Cancelar Ronda</Text>
@@ -58,14 +51,14 @@ const ModalCancel = () => {
                             <Button
                                 title="Cancelar"
                                 buttonStyle={{ backgroundColor: '#848484', marginBottom: 15 }}
-                                onPress={() => toggleModalVisibility()} />
+                                onPress={() => isVisibleModal('isVisibleCancel')} />
 
                             <Button
                                 title="Aceptar"
                                 buttonStyle={{ marginLeft: 50, backgroundColor: '#002443', marginBottom: 15 }}
                                 onPress={() => {
                                     RondaDelete(stateRonda.ronda.id, state.comentario)
-                                    multipleFunction()
+                                    isVisibleModal('isVisibleCancel')
                                 }} />
                         </View>
                     </View>

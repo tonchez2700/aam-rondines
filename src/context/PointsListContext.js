@@ -9,6 +9,9 @@ import { Alert } from 'react-native';
 const initialState = {
     error: false,
     message: null,
+    isVisible: false,
+    isVisibleIncident: false,
+    isVisibleCancel: false,
     name: '',
     comentario: '',
     patrolPoint: '',
@@ -50,6 +53,20 @@ const PointsListRedcer = (state = initialState, action) => {
                 error: false,
                 message: "",
                 patrolPoint: action.payload.ronda
+            }
+        case 'CHANGE_VISIBLE_MODAL':
+            let typeVisible = action.payload.type
+            let visibleCheck
+            if (typeVisible == 'isVisible') {
+                visibleCheck = !state.isVisible
+            } else if (typeVisible == 'isVisibleIncident') {
+                visibleCheck = !state.isVisibleIncident
+            } else {
+                visibleCheck = !state.isVisibleCancel
+            }
+            return {
+                ...state,
+                [typeVisible]: visibleCheck
             }
         case 'SET_POINTS':
             return {
@@ -256,6 +273,15 @@ const prepareData = (latitud, longitud) => {
     return data
 }
 
+const isVisibleModal = (dispatch) => {
+    return async (type) => {
+        dispatch({
+            type: 'CHANGE_VISIBLE_MODAL',
+            payload: { type }
+        })
+    }
+}
+
 export const { Context, Provider } = createDataContext(
     PointsListRedcer,
     {
@@ -265,6 +291,7 @@ export const { Context, Provider } = createDataContext(
         handleInputChange,
         setPointsList,
         storeCheck,
+        isVisibleModal
     },
     initialState
 );

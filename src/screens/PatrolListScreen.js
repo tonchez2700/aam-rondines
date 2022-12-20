@@ -1,6 +1,6 @@
 import {
     Text, View, ScrollView, StyleSheet,
-    TouchableOpacity, FlatList
+    TouchableOpacity, FlatList, RefreshControl
 } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import PatrolList from '../components/PatrolList';
@@ -10,17 +10,27 @@ import { Input, Button, Icon } from 'react-native-elements';
 import tw from 'tailwind-react-native-classnames';
 import { useNavigation } from '@react-navigation/native';
 
-
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
 const PatrolListScreen = () => {
 
     const { state, fetchingData, setRonda } = useContext(PatrolsListContext)
     const navigation = useNavigation();
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(200).then(() => setRefreshing(false));
+    }, []);
 
     useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchingData()
+        });
+        return unsubscribe;
+    }, []);
 
-        fetchingData()
-
-    }, [state.rondines])
 
     return (
         <View style={styles.container}>
@@ -30,12 +40,20 @@ const PatrolListScreen = () => {
 
                 <View style={tw`flex-row`}>
 
-                    <Text style={[tw` flex-auto w-64 text-lg text-center border `, { backgroundColor: "#001F42", color: "white" }]}>NOMBRE</Text>
-                    <Text style={[tw`flex-auto w-32 text-lg text-center  border`, { backgroundColor: "#001F42", color: "white" }]}>ACCIONES</Text>
+                    <Text style={[tw` flex-auto text-lg text-center border `, { backgroundColor: "#001F42", color: "white", width: '60%' }]}>NOMBRE</Text>
+                    <Text style={[tw`flex-auto text-lg text-center  border`, { backgroundColor: "#001F42", color: "white", width: '40%' }]}>ACCIONES</Text>
                 </View>
                 <FlatList
                     data={state.rondines}
                     updateCellsBatchingPeriod={50}
+                    refreshControl={<RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={() => {
+                            fetchingData(),
+                                onRefresh()
+                        }
+                        }
+                    />}
                     keyExtractor={item => `${item.id}`}
                     onEndReachedThreshold={0.5}
                     scrollEnabled={true}
@@ -49,13 +67,14 @@ const PatrolListScreen = () => {
                                     color: "white"
                                 }]} >
                                 <View style={tw`flex-row  `}>
-                                    <Text style={[tw`flex-auto w-64 text-lg text-center p-2`, {
+                                    <Text style={[tw`flex-auto  text-lg text-center p-2`, {
                                         borderColor: 'gray',
                                         borderRightWidth: 0.2,
+                                        width: '60%',
                                         color: "black"
                                     }]}>{item.nombre}</Text>
                                     <TouchableOpacity
-                                        style={[tw`p-2`, {paddingRight: 0}]}
+                                        style={[tw`p-2`, { width: '40%' }]}
                                         onPress={() => setRonda(item.id)}>
                                         <Icon
                                             size={35}
@@ -69,7 +88,7 @@ const PatrolListScreen = () => {
                     }}
                 />
             </View>
-        </View>
+        </View >
     )
 }
 

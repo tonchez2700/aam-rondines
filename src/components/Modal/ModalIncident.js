@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Modal, Dimensions, } from 'react-native'
 import { Input, Button, Icon } from 'react-native-elements';
+import { Context as PointsListContext } from '../../context/PointsListContext';
 import { useNavigation } from '@react-navigation/native';
 import tw from 'tailwind-react-native-classnames'
 
@@ -9,30 +10,23 @@ const { width } = Dimensions.get("window");
 const ModalIncident = () => {
 
     const navigation = useNavigation();
-    const [modalVisible, setModalVisible] = useState(false);
-    const toggleModalVisibility = () => {
-        setModalVisible(!modalVisible);
-    };
-    const multipleFunction = () => {
-        toggleModalVisibility();
-        navigation.navigate('CeateReportScreen');
-    }
-
-
+    const { state, isVisibleModal } = useContext(PointsListContext);
     return (
         <View>
             <Button
-                buttonStyle={{ backgroundColor: '#002443', marginBottom: 10 , marginTop: 50 }}
+                buttonStyle={{ backgroundColor: '#002443', marginBottom: 10, marginTop: 50 }}
                 title={"Reportar incidente"}
-                onPress={() => toggleModalVisibility()}>
+                onPress={() => isVisibleModal('isVisibleIncident')}>
             </Button>
 
             <Modal
                 animationType="slide"
                 transparent
-                visible={modalVisible}
+                visible={state.isVisibleIncident}
                 presentationStyle="overFullScreen"
-                onDismiss={() => toggleModalVisibility()}>
+                onRequestClose={() =>
+                    isVisibleModal('isVisibleIncident')
+                }>
                 <View style={styles.viewWrapper}>
                     <View style={styles.modalView}>
                         <Text style={tw`font-bold text-xl`}>¿Reportar incidente?</Text>
@@ -41,13 +35,13 @@ const ModalIncident = () => {
                             <Button
                                 title="Cancelar"
                                 buttonStyle={{ backgroundColor: '#848484', marginBottom: 15 }}
-                                onPress={() => toggleModalVisibility()} />
+                                onPress={() => isVisibleModal('isVisibleIncident')} />
 
                             <Button
                                 title="Aceptar"
                                 buttonStyle={{ marginLeft: 50, backgroundColor: '#002443', marginBottom: 15 }}
 
-                                onPress={() => multipleFunction()} />
+                                onPress={() => { isVisibleModal('isVisibleIncident'), navigation.navigate('CeateReportScreen') }} />
                         </View>
                     </View>
                 </View>

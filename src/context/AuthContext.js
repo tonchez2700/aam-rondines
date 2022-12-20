@@ -75,10 +75,12 @@ const tryLocalSignin = (dispatch) => {
 
 const signin = (dispatch) => {
     return async ({ email, password }) => {
+       
         dispatch({ type: 'FETCHING_DATA', payload: { fetchingData: true } });
         try {
             tryAuth(email, password, dispatch);
         } catch (error) {
+            console.log("pato error");
             dispatch({
                 type: 'SET_REQUEST_ERROR',
                 payload: {
@@ -104,14 +106,17 @@ const tryAuth = async (email, password, dispatch) => {
         email: email,
         password: password
     }
-    const response = await httpClient.post('/cuentas/login', data)
+    console.log("pato");
+    const response = await httpClient.post('cuentas/login', data)
     const today = new Date();
     const expirationTime = new Date(response.expiracion)
+    console.log(response);
     if (expirationTime > today.getTime()) {
         const user = {
             expiracion: response.expiracion,
             token: response.token
         }
+        console.log("pato");
         await AsyncStorage.setItem('user', JSON.stringify(user))
         const user1 = JSON.parse(await AsyncStorage.getItem('user'));
         (user1);
