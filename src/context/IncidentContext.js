@@ -107,7 +107,6 @@ const store = (dispatch) => {
                     onPress: () => rootNavigation.goBack()
                 }]
             )
-            console.log(data.data);
             const response = await httpClient.post(
                 'incidentes/crearIncidente',
                 data.data,
@@ -115,7 +114,6 @@ const store = (dispatch) => {
                     'Authorization': `Bearer ${token}`,
                 }
             )
-            console.log(response);
         } else {
             dispatch({
                 type: 'SET_ERROR',

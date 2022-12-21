@@ -147,8 +147,7 @@ const setPointsList = (dispatch) => {
 
 const storeCheck = (dispatch) => {
     return async (id, alcance, latitud, longitud, modalLatitud, modalLongitud) => {
-        console.log(latitud, longitud, modalLatitud, modalLongitud);
-        console.log(alcance);
+    
         const data = prepareData(latitud, longitud)
         const verification = isPointWithinRadius(
             { latitude: modalLatitud, longitude: modalLongitud },
@@ -161,8 +160,6 @@ const storeCheck = (dispatch) => {
             { latitude: latitud, longitude: longitud },
             { latitude: modalLatitud, longitude: modalLongitud }
         );
-
-        console.log(verification, sa);
         if (verification == true) {
             const user = JSON.parse(await AsyncStorage.getItem('user'));
             const token = user.token
