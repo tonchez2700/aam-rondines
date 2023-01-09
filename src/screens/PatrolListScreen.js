@@ -30,7 +30,7 @@ const PatrolListScreen = () => {
             fetchingData()
         });
         return unsubscribe;
-    }, [state.rondines, navigation]);
+    }, [navigation, state.rondines]);
 
 
     return (
