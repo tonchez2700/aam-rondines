@@ -37,23 +37,18 @@ const PointsListScreen = () => {
     const timeFormat = moment(time).format('h:mm:ss a')
     const full_initial_date = new Date(stateRonda.ronda?.fechaHoraInicio);
     const initial_date = moment(full_initial_date).format('DD-MM-YYYY');
+
     useEffect(() => {
-
         requestForegroundPermissions()
+    }, [state.point])
 
-    }, [stateLocation.location])
     useEffect(() => {
 
         if (state.statusFetchingData != false) {
             setPointsList(stateRonda.ronda.id);
         }
-    }, [stateLocation.location]);
-    // useEffect(() => {
-    //     setInterval(() => {
-    //         const today = new Date();
-    //         setClockState(moment(today).format('h:mm:ss a'))
-    //     }, 1000);
-    // }, []);
+    }, [state.point]);
+
 
     return (
 
@@ -61,13 +56,10 @@ const PointsListScreen = () => {
         <ScrollView resizeMode="cover" >
             <View style={styles.container}>
                 {!stateLocation.hasPermission ?
-
                     <PermissionWarningDenied
                         message={stateLocation.message}
                         requestForegroundPermissions={requestForegroundPermissions} />
                     :
-
-
                     <View Style={{ paddingBottom: 100 }}>
                         <HeadTitleScreen title='Listado de rondines' />
 
@@ -88,12 +80,10 @@ const PointsListScreen = () => {
                                 <Text numberOfLines={1} style={[tw`flex-1 text-black font-bold text-lg `]}>Tiempo Acumulado: </Text>
                                 <Text style={[tw`flex-1 text-black text-lg`]}> {timeFormat}</Text>
                             </View>
-
                         </View>
                         {
                             !state.fetchingData
                                 ?
-
                                 <View>
                                     {
                                         state.point.map((item, key) => {
@@ -129,8 +119,6 @@ const PointsListScreen = () => {
                                                                             color='#D6A51C' />
                                                                     </TouchableOpacity>
                                                                 </View>
-
-
                                                             </View>
                                                             :
                                                             <View style={tw`flex-row  pt-5 pb-5 items-center border-b border-t border-gray-200`}>
@@ -148,10 +136,7 @@ const PointsListScreen = () => {
                                                                         name='circle'
                                                                         type='material'
                                                                         color='green' />
-
                                                                 </View>
-
-
                                                             </View>
                                                     }
                                                 </View>
@@ -184,7 +169,7 @@ const PointsListScreen = () => {
                                         </View>
                                         <View style={tw`flex-row `}>
                                             <Text style={[tw`mr-2 font-bold`, { color: '#002443' }]}>Ubicación:</Text>
-                                            <Text style={{ flex: 1 }} numberOfLines={1}>{`${stateLocation.location?.latitude}, ${stateLocation.location?.longitude}`} </Text>
+                                            <Text >{`${stateLocation.location?.latitude}, ${stateLocation.location?.longitude}`} </Text>
                                         </View>
                                     </View>
 
@@ -204,7 +189,7 @@ const PointsListScreen = () => {
                                                         }]
                                                     )
                                                     :
-                                                    storeCheck(modalID, stateRonda.ronda.alcance, stateLocation.location.latitude, stateLocation.location.longitude, modalLatitud, modalLongitud)
+                                                    storeCheck(modalID, stateRonda.ronda.alcance, stateLocation.location.latitude, stateLocation.location.longitude, modalLatitud, modalLongitud, setPointsList(stateRonda.ronda.id))
                                                     , isVisibleModal('isVisible')
                                             }} />
                                         <Button
@@ -213,15 +198,12 @@ const PointsListScreen = () => {
                                             onPress={() => {
                                                 isVisibleModal('isVisible')
                                             }} />
-
-
                                     </View>
                                 </View>
                             </View>
                         </Modal>
                         <ModalIncident />
                         <ModalCancel />
-
                         <Button
                             buttonStyle={{ backgroundColor: '#A2A2A2', marginBottom: 10 }}
                             title={"Regresar"}
