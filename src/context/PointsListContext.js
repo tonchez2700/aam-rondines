@@ -119,35 +119,48 @@ const setPointsList = (dispatch) => {
                 'Authorization': `Bearer ${token}`,
             }
         )
+        
         if (response != '' || response == null) {
             dispatch({
                 type: 'SET_POINTS',
                 payload: { response }
             })
         } else {
-
             dispatch({
                 type: 'SET_STATUS',
                 payload: true
             })
             rootNavigation.navigate('PatrolListScreen')
-            Alert.alert(
-                "Completo ",
-                "Ronda completada .",
 
-                [{
-                    text: "Aceptar",
-                }]
-            )
         }
 
     }
 }
 
+const test = (response, me) => {
+    if (response.status == false) {
+        Alert.alert(
+            "ERROR",
+            "Hubo un error no es posible dar check-in .",
+            [{
+                text: "Aceptar",
+            }]
+        )
+    } else {
+        Alert.alert(
+            "Correcto",
+            "Se dio Check-in Correctamente .",
+            [{
+                text: "Aceptar",
+                onPress: () => me
+            }]
+        )
+    }
+}
 
 const storeCheck = (dispatch) => {
-    return async (id, alcance, latitud, longitud, modalLatitud, modalLongitud) => {
-    
+    return async (id, alcance, latitud, longitud, modalLatitud, modalLongitud, me) => {
+
         const data = prepareData(latitud, longitud)
         const verification = isPointWithinRadius(
             { latitude: modalLatitud, longitude: modalLongitud },
@@ -155,12 +168,7 @@ const storeCheck = (dispatch) => {
             alcance
 
         );
-
-        const sa = getPreciseDistance(
-            { latitude: latitud, longitude: longitud },
-            { latitude: modalLatitud, longitude: modalLongitud }
-        );
-        if (verification == true) {
+        if (verification) {
             const user = JSON.parse(await AsyncStorage.getItem('user'));
             const token = user.token
             const response = await httpClient.put(`rondas/checkinPunto/${id}`,
@@ -169,23 +177,7 @@ const storeCheck = (dispatch) => {
                     'Authorization': `Bearer ${token}`,
                 }
             );
-            if (response.status == 404) {
-                Alert.alert(
-                    "ERROR",
-                    "Hubo un error no es posible dar check-in .",
-                    [{
-                        text: "Aceptar",
-                    }]
-                )
-            } else {
-                Alert.alert(
-                    "Correcto",
-                    "Se dio Check-in Correctamente .",
-                    [{
-                        text: "Aceptar",
-                    }]
-                )
-            }
+            test(response, me)
         } else {
             Alert.alert(
                 "No se pudo dar check-in.",

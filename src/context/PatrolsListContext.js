@@ -63,14 +63,12 @@ const clearState = (dispatch) => {
 
 const fetchingData = (dispatch) => {
     return async () => {
-
         dispatch({ type: 'FETCHING_DATA', payload: { fetchingData: true } });
         const user = JSON.parse(await AsyncStorage.getItem('user'));
         const token = user.token
         let date = moment(new Date()).format('DD-MM-YYYY , h:mm:ss a')
         let expiration = moment(user.expiracion).format('DD-MM-YYYY , h:mm:ss a')
         if (expiration < date) {
-
             Alert.alert(
                 "Tiempo Agotado",
                 "Tiempo se sesion acabado.",
@@ -80,7 +78,6 @@ const fetchingData = (dispatch) => {
                 }]
             )
         } else {
-
             const rondines = await httpClient.get(`rondas/obtenerRondines`,
                 {
                     'Authorization': `Bearer ${token}`,

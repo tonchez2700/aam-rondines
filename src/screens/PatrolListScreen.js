@@ -17,11 +17,12 @@ const PatrolListScreen = () => {
 
     const { state, fetchingData, setRonda } = useContext(PatrolsListContext)
     const navigation = useNavigation();
+    const [loading, setloading] = useState(false)
     const [refreshing, setRefreshing] = React.useState(false);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        wait(200).then(() => setRefreshing(false));
+        wait(1000).then(() => { setRefreshing(false), setloading(false) });
     }, []);
 
     useEffect(() => {
@@ -29,37 +30,39 @@ const PatrolListScreen = () => {
             fetchingData()
         });
         return unsubscribe;
-    }, []);
+    }, [state.rondines, navigation]);
 
 
     return (
-        <View style={styles.container}>
+        <ScrollView
+            refreshControl={<RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => {
+                    fetchingData(),
+                        onRefresh()
+                }
+                }
+            />}
+            style={styles.container}>
             <HeadTitleScreen title='Listado de rondines' />
-
+            <Button
+                title="Recargar"
+                loading={loading}
+                buttonStyle={{ backgroundColor: '#001F42', marginBottom: 15, justifyContent: 'center' }}
+                onPress={() => {
+                    fetchingData(),
+                        onRefresh(),
+                        setloading(true);
+                }} />
             <View style={tw`mt-1`}>
-
                 <View style={tw`flex-row`}>
-
                     <Text style={[tw` flex-auto text-lg text-center border `, { backgroundColor: "#001F42", color: "white", width: '60%' }]}>NOMBRE</Text>
                     <Text style={[tw`flex-auto text-lg text-center  border`, { backgroundColor: "#001F42", color: "white", width: '40%' }]}>ACCIONES</Text>
                 </View>
-                <FlatList
-                    data={state.rondines}
-                    updateCellsBatchingPeriod={50}
-                    refreshControl={<RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={() => {
-                            fetchingData(),
-                                onRefresh()
-                        }
-                        }
-                    />}
-                    keyExtractor={item => `${item.id}`}
-                    onEndReachedThreshold={0.5}
-                    scrollEnabled={true}
-                    renderItem={({ item }) => {
+                {
+                    state.rondines.map((item, key) => {
                         return (
-                            <View
+                            <View key={item.id}
                                 style={[tw`flex-row bg-gray-200`, {
                                     borderColor: 'gray',
                                     borderTopWidth: 0.2,
@@ -85,10 +88,10 @@ const PatrolListScreen = () => {
                                 </View>
                             </View>
                         )
-                    }}
-                />
+                    })
+                }
             </View>
-        </View >
+        </ScrollView >
     )
 }
 
